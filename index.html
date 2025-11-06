@@ -322,7 +322,7 @@
       "食":{pinyinBase:"shi",tone:2},"物":{pinyinBase:"wu",tone:4},"唱":{pinyinBase:"chang",tone:4},"歌":{pinyinBase:"ge",tone:1},
       "看":{pinyinBase:"kan",tone:4},"电":{pinyinBase:"dian",tone:4},"影":{pinyinBase:"ying",tone:3},"大":{pinyinBase:"da",tone:4},
       "读":{pinyinBase:"du",tone:2},"书":{pinyinBase:"shu",tone:1},"时":{pinyinBase:"shi",tone:2},"候":{pinyinBase:"hou",tone:4},
-      "亲":{pinyinBase:"qin",tone:1},"近":{pinyinBase:"jin",tone:4},"举":{pinyinBase:"ju",tone:3},"手":{pinyinBase:"shou",tone:3},
+      "亲":{pinyinBase:"qin",tone:1},"近":{pinyinBase:"jin",tone:4},"举":{pinyinBase:"ju",tone:2},"手":{pinyinBase:"shou",tone:3},
       "笑":{pinyinBase:"xiao",tone:4},"分":{pinyinBase:"fen",tone:1},"享":{pinyinBase:"xiang",tone:3},
       "比":{pinyinBase:"bi",tone:3},"赛":{pinyinBase:"sai",tone:4},"周":{pinyinBase:"zhou",tone:1},"末":{pinyinBase:"mo",tone:4},
       "自":{pinyinBase:"zi",tone:4},"己":{pinyinBase:"ji",tone:3}
@@ -540,15 +540,17 @@
             });
           }
           choiceSelected = true;
+          checkIfReadyToNext();
 
-          // 2秒后淡出消失
-          setTimeout(() => {
-            choicesEl.style.opacity = "0";
-            setTimeout(() => {
-              choicesEl.innerHTML = "";
-              choicesEl.style.display = "none";
-            }, 600);
-          }, 2000);
+        // 延迟2秒后，仅清空选项内容，不再淡出或隐藏
+fadeTimer = setTimeout(() => {
+  choicesEl.innerHTML = ""; // 清空旧题选项
+}, 2000);
+
+// 延迟后检查是否可以进入下一题
+setTimeout(() => {
+  checkIfReadyToNext();
+}, 2000);
 
           checkIfReadyToNext();
         });
@@ -843,4 +845,3 @@
   </script>
 </body>
 </html>
-
