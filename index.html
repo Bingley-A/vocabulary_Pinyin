@@ -57,7 +57,7 @@
       background:linear-gradient(90deg,var(--c3),var(--c4)); color:#fff; font-weight:800; cursor:pointer}
 
     .choices{flex:1; display:flex; flex-direction:column; gap:12px; margin-top:14px;
-      transition:opacity 0.6s ease} /* 新增淡出动画 */
+      transition:opacity 0.6s ease}
     .choice{padding:16px; border-radius:14px; font-weight:900; font-size:22px; cursor:pointer;
       background:linear-gradient(135deg,#FFFDE7,#FFF9C4); border:3px solid rgba(0,0,0,0.03); transition:.12s;
       text-align:center}
@@ -77,6 +77,17 @@
     .transcript{font-weight:800; padding:6px 8px; border-radius:8px; border:2px solid transparent;
       margin-left:10px; min-width:160px; text-align:center}
     .rec-play-wrap{display:flex; flex-direction:column; align-items:center; margin-top:10px}
+
+    /* 新增提示样式 */
+    .stage-indicator {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 10px 0;
+      padding: 8px;
+      border-radius: 8px;
+      background-color: #f0f7ff;
+      color: #1976d2;
+    }
 
     @media (max-width:760px){
       .game-content{flex-direction:column}
@@ -178,27 +189,89 @@
       }
     }
     .superman {
-  position: fixed;
-  top: 50%; /* 垂直居中 */
-  left: -100px; /* 初始位置在屏幕左侧外 */
-  transform: translateY(-50%); /* 垂直居中对齐 */
-  font-size: 80px;
-  animation: flyRight 3s forwards; /* 使用新的从左到右动画 */
-  z-index: 1001;
-}
-@keyframes flyRight {
-  0% {
-    left: -100px; /* 左侧外部开始 */
-    opacity: 0;
-  }
-  20% {
-    opacity: 1;
-  }
-  100% {
-    left: 100vw; /* 飞到右侧外部 */
-    opacity: 0;
-  }
-}
+      position: fixed;
+      top: 50%;
+      left: -100px;
+      transform: translateY(-50%);
+      font-size: 80px;
+      animation: flyRight 3s forwards;
+      z-index: 1001;
+    }
+    @keyframes flyRight {
+      0% {
+        left: -100px;
+        opacity: 0;
+      }
+      20% {
+        opacity: 1;
+      }
+      100% {
+        left: 100vw;
+        opacity: 0;
+      }
+    }
+
+    /* 词语选择弹窗样式 */
+    #word-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 18px;
+      padding: 20px;
+      width: 95vw;
+      max-width: 1000px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+    .grade-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .word-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+      gap: 5px;
+      margin-bottom: 20px;
+    }
+    .word-btn {
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+      text-align: center;
+      padding: 5px;
+    }
+    .word-btn.selected {
+      background: #FFB74D;
+      color: white;
+    }
+    .select-all-btn {
+      padding: 5px 10px;
+      background: linear-gradient(90deg,var(--c3),var(--c4));
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .modal-footer {
+      text-align: center;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -241,6 +314,7 @@
             <label for="custom-num" style="font-weight:800">自定义：</label>
             <input id="custom-num" class="custom-input" type="number" min="1" placeholder="数量">
             <div style="font-size:13px;color:#666">（超过最大值会自动取最大）</div>
+            <button id="select-words" style="background:linear-gradient(90deg,var(--c4),var(--c5));border:none;color:#fff;padding:8px 12px;border-radius:10px;font-weight:800;cursor:pointer">选择词语</button>
           </div>
         </div>
 
@@ -254,17 +328,20 @@
           <div id="q-count" style="font-weight:900">0 / 0</div>
         </div>
 
+        <!-- 新增阶段提示 -->
+        <div class="stage-indicator" id="stage-indicator">第一阶段：请先朗读词语并录音验证</div>
+
         <div class="game-content">
           <div class="char-box">
             <span class="word" id="word-display">词语</span>
             <div class="meta" id="meta-line">（英文释义）</div>
             <div style="margin-top:6px">
-              <button id="play-sound" class="play-btn">播放题干音</button>
+              <button id="play-sound" class="play-btn">播放词语发音</button>
             </div>
 
             <div class="rec-row">
-              <button id="rec-btn" class="rec-btn" style="background:linear-gradient(90deg,var(--c1),var(--c2));color:#fff">录音</button>
-              <button id="stop-rec-btn" class="rec-btn" style="background:linear-gradient(90deg,var(--c3),var(--c4));color:#fff;display:none">停止</button>
+              <button id="rec-btn" class="rec-btn" style="background:linear-gradient(90deg,var(--c1),var(--c2));color:#fff">开始录音</button>
+              <button id="stop-rec-btn" class="rec-btn" style="background:linear-gradient(90deg,var(--c3),var(--c4));color:#fff;display:none">停止录音</button>
               <span id="rec-status" class="rec-indicator">（未录音）</span>
               <div id="transcript" class="transcript" title="识别结果显示在这里">（识别结果）</div>
             </div>
@@ -303,39 +380,244 @@
     <footer>快乐学词语 🎈</footer>
   </div>
 
+  <!-- 词语选择弹窗 -->
+  <div id="word-modal">
+    <div class="modal-content">
+      <div id="grade-sections"></div>
+      <div class="modal-footer">
+        <button id="start-custom" class="start-btn">开始练习</button>
+        <button id="cancel-modal" class="home-btn">取消</button>
+      </div>
+    </div>
+  </div>
+
   <audio id="audio" preload="auto" style="display:none"></audio>
 
   <script>
-    const gradeWords = {1:[],2:[],3:[],4:[
-      "个人","社会","角色","代表","兴趣","角色","家庭","学校","活动","老师",
-      "心情","做饭","衣服","食物","唱歌","看电影","读书","时候","亲近","举手",
-      "大笑","分享","比赛","周末","自己"
-    ]};
-
-    const pinyinMap = {
-      "个":{pinyinBase:"ge",tone:4},"人":{pinyinBase:"ren",tone:2},"社":{pinyinBase:"she",tone:4},"会":{pinyinBase:"hui",tone:4},
-      "角":{pinyinBase:"jue",tone:2},"色":{pinyinBase:"se",tone:4},"代":{pinyinBase:"dai",tone:4},"表":{pinyinBase:"biao",tone:3},
-      "兴":{pinyinBase:"xing",tone:4},"趣":{pinyinBase:"qu",tone:4},"家":{pinyinBase:"jia",tone:1},"庭":{pinyinBase:"ting",tone:2},
-      "学":{pinyinBase:"xue",tone:2},"校":{pinyinBase:"xiao",tone:4},"活":{pinyinBase:"huo",tone:2},"动":{pinyinBase:"dong",tone:4},
-      "老":{pinyinBase:"lao",tone:3},"师":{pinyinBase:"shi",tone:1},"心":{pinyinBase:"xin",tone:1},"情":{pinyinBase:"qing",tone:2},
-      "做":{pinyinBase:"zuo",tone:4},"饭":{pinyinBase:"fan",tone:4},"衣":{pinyinBase:"yi",tone:1},"服":{pinyinBase:"fu",tone:2},
-      "食":{pinyinBase:"shi",tone:2},"物":{pinyinBase:"wu",tone:4},"唱":{pinyinBase:"chang",tone:4},"歌":{pinyinBase:"ge",tone:1},
-      "看":{pinyinBase:"kan",tone:4},"电":{pinyinBase:"dian",tone:4},"影":{pinyinBase:"ying",tone:3},"大":{pinyinBase:"da",tone:4},
-      "读":{pinyinBase:"du",tone:2},"书":{pinyinBase:"shu",tone:1},"时":{pinyinBase:"shi",tone:2},"候":{pinyinBase:"hou",tone:4},
-      "亲":{pinyinBase:"qin",tone:1},"近":{pinyinBase:"jin",tone:4},"举":{pinyinBase:"ju",tone:2},"手":{pinyinBase:"shou",tone:3},
-      "笑":{pinyinBase:"xiao",tone:4},"分":{pinyinBase:"fen",tone:1},"享":{pinyinBase:"xiang",tone:3},
-      "比":{pinyinBase:"bi",tone:3},"赛":{pinyinBase:"sai",tone:4},"周":{pinyinBase:"zhou",tone:1},"末":{pinyinBase:"mo",tone:4},
-      "自":{pinyinBase:"zi",tone:4},"己":{pinyinBase:"ji",tone:3}
-    };
-
-    const lexiconWords = {
-      "个人":"personal; individual","社会":"society; social","角色":"role; character",
-      "代表":"representative; to represent","兴趣":"interest; hobby","家庭":"family; household",
-      "学校":"school","活动":"activity; event","老师":"teacher","心情":"mood; feeling",
-      "做饭":"to cook; cooking","衣服":"clothes; clothing","食物":"food","唱歌":"to sing; singing",
-      "看电影":"to watch a movie; watching movies","读书":"to read; studying","时候":"time; moment",
-      "亲近":"intimate; close","举手":"to raise one's hand","大笑":"laugh",
-      "分享":"to share","比赛":"competition; match","周末":"weekend","自己":"oneself; self"
+    // 修改：在gradeWords中增加每个字的声母(initial)和韵母(final)信息
+    const gradeWords = {
+      1: [],
+      2: [{word: "我", pinyin: "wǒ", syllables: [{char: "我", pinyinBase: "wo", tone: 3, initial: "w", final: "o"}], english: "I; me"},{word: "叫", pinyin: "jiào", syllables: [{char: "叫", pinyinBase: "jiao", tone: 4, initial: "j", final: "iao"}], english: "call; name"},{word: "下雨", pinyin: "xià yǔ", syllables: [{char: "下", pinyinBase: "xia", tone: 4, initial: "x", final: "ia"}, {char: "雨", pinyinBase: "yu", tone: 3, initial: "", final:"ü"}], english:"rain; raining"},{word: "书包", pinyin: "shū bāo", syllables: [{char: "书", pinyinBase: "shu", tone: 1, initial: "sh", final: "u"}, {char: "包", pinyinBase: "bao", tone: 1, initial: "b", final: "ao"}], english: "schoolbag; backpack"},{word: "本子", pinyin: "běn zi", syllables: [{char: "本", pinyinBase: "ben", tone: 3, initial: "b", final: "en"}, {char: "子", pinyinBase: "zi", tone: 5, initial: "z", final: "i"}], english: "notebook; book"},{word: "同学", pinyin: "tóng xué", syllables: [{char: "同", pinyinBase: "tong", tone: 2, initial: "t", final: "ong"}, {char: "学", pinyinBase: "xue", tone: 2, initial: "x", final: "üe"}], english: "classmate; schoolmate"},{word: "年级", pinyin: "nián jí", syllables: [{char: "年", pinyinBase: "nian", tone: 2, initial: "n", final: "ian"}, {char: "级", pinyinBase: "ji", tone: 2, initial: "j", final: "i"}], english: "grade; year level"},{word: "高兴", pinyin: "gāo xìng", syllables: [{char: "高", pinyinBase: "gao", tone: 1, initial: "g", final: "ao"}, {char: "兴", pinyinBase: "xing", tone: 4, initial: "x", final: "ing"}], english: "happy; glad"},{word: "回来", pinyin: "huí lái", syllables: [{char: "回", pinyinBase: "hui", tone: 2, initial: "h", final: "ui"}, {char: "来", pinyinBase: "lai", tone: 2, initial: "l", final: "ai"}], english: "come back; return"},{word: "开心", pinyin: "kāi xīn", syllables: [{char: "开", pinyinBase: "kai", tone: 1, initial: "k", final: "ai"}, {char: "心", pinyinBase: "xin", tone: 1, initial: "x", final: "in"}], english: "happy; joyful"},{word: "长大", pinyin: "zhǎng dà", syllables: [{char: "长", pinyinBase: "zhang", tone: 3, initial: "zh", final: "ang"}, {char: "大", pinyinBase: "da", tone: 4, initial: "d", final: "a"}], english: "grow up; become an adult"},{word: "还有", pinyin: "hái yǒu", syllables: [{char: "还", pinyinBase: "hai", tone: 2, initial: "h", final: "ai"}, {char: "有", pinyinBase: "you", tone: 3, initial: "y", final: "ou"}], english: "still have; in addition"}],
+      3: [],
+      4: [
+        {
+          word: "个人",
+          pinyin: "gè rén",
+          syllables: [
+            {char: "个", pinyinBase: "ge", tone: 4, initial: "g", final: "e"},
+            {char: "人", pinyinBase: "ren", tone: 2, initial: "r", final: "en"}
+          ],
+          english: "personal; individual"
+        },
+        {
+          word: "社会",
+          pinyin: "shè huì",
+          syllables: [
+            {char: "社", pinyinBase: "she", tone: 4, initial: "sh", final: "e"},
+            {char: "会", pinyinBase: "hui", tone: 4, initial: "h", final: "ui"}
+          ],
+          english: "society; social"
+        },
+        {
+          word: "角色",
+          pinyin: "jué sè",
+          syllables: [
+            {char: "角", pinyinBase: "jue", tone: 2, initial: "j", final: "ue"},
+            {char: "色", pinyinBase: "se", tone: 4, initial: "s", final: "e"}
+          ],
+          english: "role; character"
+        },
+        {
+          word: "代表",
+          pinyin: "dài biǎo",
+          syllables: [
+            {char: "代", pinyinBase: "dai", tone: 4, initial: "d", final: "ai"},
+            {char: "表", pinyinBase: "biao", tone: 3, initial: "b", final: "iao"}
+          ],
+          english: "representative; to represent"
+        },
+        {
+          word: "兴趣",
+          pinyin: "xìng qù",
+          syllables: [
+            {char: "兴", pinyinBase: "xing", tone: 4, initial: "x", final: "ing"},
+            {char: "趣", pinyinBase: "qu", tone: 4, initial: "q", final: "u"}
+          ],
+          english: "interest; hobby"
+        },
+        {
+          word: "家庭",
+          pinyin: "jiā tíng",
+          syllables: [
+            {char: "家", pinyinBase: "jia", tone: 1, initial: "j", final: "ia"},
+            {char: "庭", pinyinBase: "ting", tone: 2, initial: "t", final: "ing"}
+          ],
+          english: "family; household"
+        },
+        {
+          word: "学校",
+          pinyin: "xué xiào",
+          syllables: [
+            {char: "学", pinyinBase: "xue", tone: 2, initial: "x", final: "ue"},
+            {char: "校", pinyinBase: "xiao", tone: 4, initial: "x", final: "iao"}
+          ],
+          english: "school"
+        },
+        {
+          word: "活动",
+          pinyin: "huó dòng",
+          syllables: [
+            {char: "活", pinyinBase: "huo", tone: 2, initial: "h", final: "uo"},
+            {char: "动", pinyinBase: "dong", tone: 4, initial: "d", final: "ong"}
+          ],
+          english: "activity; event"
+        },
+        {
+          word: "老师",
+          pinyin: "lǎo shī",
+          syllables: [
+            {char: "老", pinyinBase: "lao", tone: 3, initial: "l", final: "ao"},
+            {char: "师", pinyinBase: "shi", tone: 1, initial: "sh", final: "i"}
+          ],
+          english: "teacher"
+        },
+        {
+          word: "心情",
+          pinyin: "xīn qíng",
+          syllables: [
+            {char: "心", pinyinBase: "xin", tone: 1, initial: "x", final: "in"},
+            {char: "情", pinyinBase: "qing", tone: 2, initial: "q", final: "ing"}
+          ],
+          english: "mood; feeling"
+        },
+        {
+          word: "做饭",
+          pinyin: "zuò fàn",
+          syllables: [
+            {char: "做", pinyinBase: "zuo", tone: 4, initial: "z", final: "uo"},
+            {char: "饭", pinyinBase: "fan", tone: 4, initial: "f", final: "an"}
+          ],
+          english: "to cook; cooking"
+        },
+        {
+          word: "衣服",
+          pinyin: "yī fu",
+          syllables: [
+            {char: "衣", pinyinBase: "yi", tone: 1, initial: "y", final: "i"},
+            {char: "服", pinyinBase: "fu", tone: 5, initial: "f", final: "u"} // 轻声处理
+          ],
+          english: "clothes; clothing"
+        },
+        {
+          word: "食物",
+          pinyin: "shí wù",
+          syllables: [
+            {char: "食", pinyinBase: "shi", tone: 2, initial: "sh", final: "i"},
+            {char: "物", pinyinBase: "wu", tone: 4, initial: "w", final: "u"}
+          ],
+          english: "food"
+        },
+        {
+          word: "唱歌",
+          pinyin: "chàng gē",
+          syllables: [
+            {char: "唱", pinyinBase: "chang", tone: 4, initial: "ch", final: "ang"},
+            {char: "歌", pinyinBase: "ge", tone: 1, initial: "g", final: "e"}
+          ],
+          english: "to sing; singing"
+        },
+        {
+          word: "看电影",
+          pinyin: "kàn diàn yǐng",
+          syllables: [
+            {char: "看", pinyinBase: "kan", tone: 4, initial: "k", final: "an"},
+            {char: "电", pinyinBase: "dian", tone: 4, initial: "d", final: "ian"},
+            {char: "影", pinyinBase: "ying", tone: 3, initial: "y", final: "ing"}
+          ],
+          english: "to watch a movie; watching movies"
+        },
+        {
+          word: "读书",
+          pinyin: "dú shū",
+          syllables: [
+            {char: "读", pinyinBase: "du", tone: 2, initial: "d", final: "u"},
+            {char: "书", pinyinBase: "shu", tone: 1, initial: "sh", final: "u"}
+          ],
+          english: "to read; studying"
+        },
+        {
+          word: "时候",
+          pinyin: "shí hou",
+          syllables: [
+            {char: "时", pinyinBase: "shi", tone: 2, initial: "sh", final: "i"},
+            {char: "候", pinyinBase: "hou", tone: 4, initial: "h", final: "ou"}
+          ],
+          english: "time; moment"
+        },
+        {
+          word: "亲近",
+          pinyin: "qīn jìn",
+          syllables: [
+            {char: "亲", pinyinBase: "qin", tone: 1, initial: "q", final: "in"},
+            {char: "近", pinyinBase: "jin", tone: 4, initial: "j", final: "in"}
+          ],
+          english: "intimate; close"
+        },
+        {
+          word: "举手",
+          pinyin: "jǔ shǒu",
+          syllables: [
+            {char: "举", pinyinBase: "ju", tone: 3, initial: "j", final: "u"},
+            {char: "手", pinyinBase: "shou", tone: 3, initial: "sh", final: "ou"}
+          ],
+          english: "to raise one's hand"
+        },
+        {
+          word: "大笑",
+          pinyin: "dà xiào",
+          syllables: [
+            {char: "大", pinyinBase: "da", tone: 4, initial: "d", final: "a"},
+            {char: "笑", pinyinBase: "xiao", tone: 4, initial: "x", final: "iao"}
+          ],
+          english: "laugh"
+        },
+        {
+          word: "分享",
+          pinyin: "fēn xiǎng",
+          syllables: [
+            {char: "分", pinyinBase: "fen", tone: 1, initial: "f", final: "en"},
+            {char: "享", pinyinBase: "xiang", tone: 3, initial: "x", final: "iang"}
+          ],
+          english: "to share"
+        },
+        {
+          word: "比赛",
+          pinyin: "bǐ sài",
+          syllables: [
+            {char: "比", pinyinBase: "bi", tone: 3, initial: "b", final: "i"},
+            {char: "赛", pinyinBase: "sai", tone: 4, initial: "s", final: "ai"}
+          ],
+          english: "competition; match"
+        },
+        {
+          word: "周末",
+          pinyin: "zhōu mò",
+          syllables: [
+            {char: "周", pinyinBase: "zhou", tone: 1, initial: "zh", final: "ou"},
+            {char: "末", pinyinBase: "mo", tone: 4, initial: "m", final: "o"}
+          ],
+          english: "weekend"
+        },
+        {
+          word: "自己",
+          pinyin: "zì jǐ",
+          syllables: [
+            {char: "自", pinyinBase: "zi", tone: 4, initial: "z", final: "i"},
+            {char: "己", pinyinBase: "ji", tone: 3, initial: "j", final: "i"}
+          ],
+          english: "oneself; self"
+        }
+      ]
     };
 
     const gradeBtns = document.querySelectorAll(".grade-btn");
@@ -365,13 +647,16 @@
     const recStatus = document.getElementById("rec-status");
     const transcriptEl = document.getElementById("transcript");
     const userRecAudio = document.getElementById("user-rec-audio");
+    const stageIndicator = document.getElementById("stage-indicator");
 
     let selectedGrade = 4, selectedNum = "all", customNum = null;
     let pool = [], order = [], cur = 0, total = 0, score = 0;
-    let choiceSelected = false, recDone = false, recCorrect = false;
+    let recDone = false, recCorrect = false;
+    let choiceSelected = false, isChoiceCorrect = false;
     let mediaStream = null, mediaRecorder = null, recordedChunks = [], recognition = null;
     let consecutiveCorrect = 0;
-    let isChoiceCorrect = false;
+    let selectedWords = new Set();
+    let isCustomWords = false;
 
     function shuffleArray(a) {
       const arr = a.slice();
@@ -383,19 +668,11 @@
     }
 
     function buildPoolForGrade(g) {
-      const list = gradeWords[g] || [];
-      return list.map(w => {
-        const syllables = [];
-        for (const ch of w) {
-          const info = pinyinMap[ch];
-          if (info) syllables.push({char:ch, pinyinBase:info.pinyinBase, tone:info.tone || 0});
-          else syllables.push({char:ch, pinyinBase:ch, tone:0});
-        }
-        return {word:w, syllables};
-      });
+      return gradeWords[g] || [];
     }
 
     function markTone(syllable, tone) {
+      if (tone === 5) return syllable;
       if (!tone || tone === 0) return syllable;
       let s = syllable.replace(/v/g,'ü');
       const toneMap = {a:['ā','á','ǎ','à'],o:['ō','ó','ǒ','ò'],e:['ē','é','ě','è'],
@@ -422,65 +699,110 @@
       return syllables.map(s => markTone(s.pinyinBase, s.tone)).join(' ');
     }
 
-    function buildBaiduTtsTexParam(syllables) {
-      return syllables.map(s => `${s.char}(${s.pinyinBase}${s.tone || ''})`).join('');
+    function playBaiduTtsForWord(word) {
+      const url = `https://tts.baidu.com/text2audio?tex=${word}&cuid=dict&lan=ZH&ctp=2&pdt=30&vol=9`;
+      audioEl.src = url; 
+      audioEl.play().catch(() => {
+        recStatus.textContent = "（请点击播放按钮听取发音）";
+      });
     }
 
-    function playBaiduTtsForWord(syllables) {
-      const tex = buildBaiduTtsTexParam(syllables);
-      const url = `https://tts.baidu.com/text2audio?tex=${encodeURIComponent(tex)}&cuid=dict&lan=ZH&ctp=2&pdt=30&vol=9`;
-      audioEl.src = url; audioEl.play().catch(()=>{});
-    }
-
-    function generatePinyinOptions(syllables) {
-      const correct = buildWordPinyinMarked(syllables);
+    // 修改：改进干扰选项生成逻辑，更多利用similarInitials和similarFinals
+    function generatePinyinOptions(syllables, correctPinyin) {
+      // 使用词语自带的正确拼音作为基准
+      const correct = correctPinyin;
       const variants = new Set([correct]);
-      const similarInitials = {b:["p","d"],p:["b","t"],m:["n","f"],f:["m","h"],d:["t","b"],t:["d","p"],
-        n:["l","m"],l:["n","r"],g:["k","h"],k:["g","h"],h:["k","g"],j:["q","x"],q:["j","x"],x:["j","q"],
-        zh:["ch","sh","z"],ch:["zh","sh","c"],sh:["ch","zh","s"],r:["l","y"],z:["c","s"],c:["z","s"],
-        s:["z","c"],y:["j","w"],w:["y","j"]};
-      const similarFinals = {a:["ai","an"],o:["ou","ong"],e:["ei","en"],i:["ie","in"],u:["ui","un"],ü:["üe","un"]};
+      const similarInitials = {b:["p","d"],p:["b","d"],m:["n"],f:["t","h"],d:["t","b","p","q"],t:["d","f"],
+        n:["l","m"],l:["n","r"],g:["k","q"],k:["g","h"],h:["k","g"],j:["q","x"],q:["j","x"],x:["j","q"],
+        zh:["ch","sh","z","j"],ch:["zh","sh","c"],sh:["ch","zh","s"],r:["l","y"],z:["c","s"],c:["z","s"],
+        s:["z","c","x"],y:["j","w"],w:["y","j"]};
+      const similarFinals = {"a": ["ai", "an"],
+      "o": ["ou", "ong"],
+      "e": ["ei", "en"],
+      "i": ["ie", "in"],
+      "u": ["ü", "un"],
+      "ü": ["üe", "un"],
+      "ai": ["a", "ei"],
+      "ei": ["ai", "e"],
+      "ui": ["u", "ou"],
+      "ao": ["ou", "a"],
+      "ou": ["uo", "ong"],
+      "iu": ["i", "u"],
+      "ie": ["i", "e"],
+      "üe": ["ü", "e"],
+      "an": ["ang", "a"],
+      "en": ["eng", "e"],
+      "in": ["ing", "i"],
+      "un": ["ong", "üe"],
+      "ang": ["an", "a"],
+      "eng": ["en", "e"],
+      "ing": ["in", "i"],
+      "ong": ["un", "ou"],
+      "ia": ["ie", "iao"],
+      "iao": ["ia", "ao"],
+      "ian": ["iang", "an"],
+      "iang": ["ian", "ang"],
+      "iong": ["ong", "ing"],
+      "ua": ["uo", "uai"],
+      "uo": ["ua", "o"],
+      "uai": ["ua", "ai"],
+      "uan": ["uang", "an"],
+      "uang": ["uan", "ang"],
+      "er": ["e", "üe"]};
 
+        // 更精确的干扰项生成方法
       function perturbSyllable(item) {
         const copy = {...item};
         const r = Math.random();
+        
+        // 80%概率替换声母或韵母（使用similar数据）
         if (r < 0.4) {
+          // 替换声母
+          if (similarInitials[copy.initial]) {
+            const sim = similarInitials[copy.initial];
+            copy.initial = sim[Math.floor(Math.random() * sim.length)];
+            // 更新拼音基础
+            copy.pinyinBase = copy.initial + copy.final;
+          }
+        } else if (r < 0.8) {
+          // 替换韵母
+          if (similarFinals[copy.final]) {
+            const sim = similarFinals[copy.final];
+            copy.final = sim[Math.floor(Math.random() * sim.length)];
+            // 更新拼音基础
+            copy.pinyinBase = copy.initial + copy.final;
+          }
+        } else {
+          // 20%概率改变声调
           let newTone = copy.tone;
           while (newTone === copy.tone) newTone = Math.floor(Math.random() * 4) + 1;
           copy.tone = newTone;
-        } else if (r < 0.7) {
-          const base = copy.pinyinBase;
-          const m = base.match(/^(zh|ch|sh|[bpmfdtnlgkhjqxrzcs])/);
-          if (m) {
-            const init = m[0];
-            const sim = similarInitials[init] || [];
-            if (sim.length) copy.pinyinBase = sim[Math.floor(Math.random()*sim.length)] + base.slice(init.length);
-          }
-        } else {
-          const base = copy.pinyinBase;
-          for (const f in similarFinals) {
-            if (base.endsWith(f)) {
-              const sim = similarFinals[f];
-              if (sim.length) copy.pinyinBase = base.slice(0,-f.length) + sim[Math.floor(Math.random()*sim.length)];
-              break;
-            }
-          }
         }
+        
         return copy;
       }
 
+      // 生成足够的干扰项
       while (variants.size < 4) {
         const copy = syllables.map(s => ({...s}));
+        // 随机选择一个音节进行干扰
         const idx = Math.floor(Math.random() * copy.length);
         copy[idx] = perturbSyllable(copy[idx]);
         const cand = buildWordPinyinMarked(copy);
         if (cand !== correct) variants.add(cand);
       }
+      
       return shuffleArray(Array.from(variants));
     }
 
     function startGame() {
-      pool = buildPoolForGrade(selectedGrade);
+      if (isCustomWords && selectedWords.size > 0) {
+        const allWords = Object.values(gradeWords).flat();
+        pool = allWords.filter(w => selectedWords.has(w.word));
+      } else {
+        pool = buildPoolForGrade(selectedGrade);
+      }
+
       let n = pool.length;
       if (selectedNum !== "all") {
         const cap = selectedNum === "custom" ? customNum : parseInt(selectedNum);
@@ -493,7 +815,7 @@
       homeSection.style.display = "none";
       gameSection.style.display = "block";
       endSection.style.display = "none";
-      gameGradeEl.textContent = `四年级`;
+      gameGradeEl.textContent = isCustomWords ? "自定义选词" : `四年级`;
       qCountEl.textContent = `${cur+1} / ${total}`;
       scoreText.textContent = `得分：${score}`;
       progressBar.style.width = `0%`;
@@ -501,68 +823,87 @@
     }
 
     function showQuestion(index) {
-      choiceSelected = false; recDone = false; recCorrect = false;
+      // 重置所有状态
+      recDone = false;
+      recCorrect = false;
+      choiceSelected = false;
       isChoiceCorrect = false;
       nextBtn.style.display = "none";
+      
+      // 重置UI
       transcriptEl.textContent = "（识别结果）";
       transcriptEl.style.borderColor = transcriptEl.style.background = transcriptEl.style.color = "";
-      transcriptEl.title = "识别结果显示在这里";
-      userRecAudio.style.display = "none"; userRecAudio.src = "";
+      userRecAudio.style.display = "none";
+      userRecAudio.src = "";
       recStatus.textContent = "（未录音）";
-
-      // 重置选项区（关键！）
-      choicesEl.style.display = "flex";
-      choicesEl.style.opacity = "1";
+      recBtn.style.display = "inline-block";
+      stopRecBtn.style.display = "none";
       choicesEl.innerHTML = "";
+      stageIndicator.textContent = "第一阶段：请先朗读词语并录音验证";
+      stageIndicator.style.backgroundColor = "#f0f7ff";
+      stageIndicator.style.color = "#1976d2";
+
+      // 停止并清理媒体资源
+      if (mediaRecorder && mediaRecorder.state === "recording") {
+        mediaRecorder.stop();
+      }
+      if (recognition && recognition.state !== "inactive") {
+        recognition.stop();
+        recognition = null;
+      }
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop());
+        mediaStream = null;
+      }
+      recordedChunks = [];
 
       const q = pool[order[index]];
       wordDisplay.textContent = q.word;
-      metaLineEl.textContent = lexiconWords[q.word] || "（英文释义暂缺）";
+      metaLineEl.textContent = q.english || "（英文释义暂缺）";
       qCountEl.textContent = `${index+1} / ${total}`;
       progressBar.style.width = Math.round((index/total)*100) + "%";
-
-      const opts = generatePinyinOptions(q.syllables);
-      for (const text of opts) {
-        const btn = document.createElement("button");
-        btn.className = "choice";
-        btn.textContent = text;
-        btn.addEventListener("click", ()=> {
-          document.querySelectorAll(".choice").forEach(b => b.disabled = true);
-          const correctStr = buildWordPinyinMarked(q.syllables);
-          if (text === correctStr) {
-            btn.classList.add("correct");
-            isChoiceCorrect = true;
-            score++; scoreText.textContent = `得分：${score}`;
-          } else {
-            btn.classList.add("wrong");
-            document.querySelectorAll(".choice").forEach(b => {
-              if (b.textContent === correctStr) b.classList.add("correct");
-            });
-          }
-          choiceSelected = true;
-          checkIfReadyToNext();
-
-        // 延迟2秒后，仅清空选项内容，不再淡出或隐藏
-fadeTimer = setTimeout(() => {
-  choicesEl.innerHTML = ""; // 清空旧题选项
-}, 2000);
-
-// 延迟后检查是否可以进入下一题
-setTimeout(() => {
-  checkIfReadyToNext();
-}, 2000);
-
-          checkIfReadyToNext();
-        });
-        choicesEl.appendChild(btn);
-      }
-
-      playBaiduTtsForWord(q.syllables);
+      
+      // 进入题目后自动播放音频
+      setTimeout(() => {
+        playBaiduTtsForWord(q.word);
+      }, 500);
     }
 
-    function checkIfReadyToNext() {
-      if (choiceSelected && recDone && recCorrect) {
-        nextBtn.style.display = "inline-block";
+    function checkStageProgress() {
+      const q = pool[order[cur]];
+      
+      // 第一阶段：录音正确后显示选项
+      if (!choiceSelected && recDone && recCorrect) {
+        stageIndicator.textContent = "第二阶段：请选择正确的拼音";
+        stageIndicator.style.backgroundColor = "#e8f5e9";
+        stageIndicator.style.color = "#2e7d32";
+        
+        // 生成并显示选项，使用词语自带的拼音
+        const opts = generatePinyinOptions(q.syllables, q.pinyin);
+        choicesEl.innerHTML = "";
+        for (const text of opts) {
+          const btn = document.createElement("button");
+          btn.className = "choice";
+          btn.textContent = text;
+          btn.addEventListener("click", ()=> {
+            document.querySelectorAll(".choice").forEach(b => b.disabled = true);
+            const correctStr = q.pinyin; // 使用词语自带的正确拼音
+            if (text === correctStr) {
+              btn.classList.add("correct");
+              isChoiceCorrect = true;
+              score++; 
+              scoreText.textContent = `得分：${score}`;
+            } else {
+              btn.classList.add("wrong");
+              document.querySelectorAll(".choice").forEach(b => {
+                if (b.textContent === correctStr) b.classList.add("correct");
+              });
+            }
+            choiceSelected = true;
+            nextBtn.style.display = "inline-block";
+          });
+          choicesEl.appendChild(btn);
+        }
       }
     }
 
@@ -576,87 +917,115 @@ setTimeout(() => {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) return null;
       const rec = new SpeechRecognition();
-      rec.lang = 'zh-CN'; rec.interimResults = false; rec.maxAlternatives = 1;
+      rec.lang = 'zh-CN';
+      rec.interimResults = false;
+      rec.maxAlternatives = 1;
       return rec;
     }
 
     recBtn.addEventListener("click", async ()=>{
       try {
+        if (mediaRecorder && mediaRecorder.state === "recording") {
+          mediaRecorder.stop();
+        }
+        
         const stream = await ensureMediaStream();
         recordedChunks = [];
         mediaRecorder = new MediaRecorder(stream);
         mediaRecorder.ondataavailable = e => e.data.size && recordedChunks.push(e.data);
         mediaRecorder.onstart = () => {
-          recStatus.textContent = "（正在录音）";
-          recBtn.style.display = "none"; stopRecBtn.style.display = "inline-block";
+          recStatus.textContent = "（正在录音...请朗读词语）";
+          recBtn.style.display = "none";
+          stopRecBtn.style.display = "inline-block";
+          transcriptEl.textContent = "（录音中...）";
         };
         mediaRecorder.onstop = () => {
           const blob = new Blob(recordedChunks, {type:'audio/webm'});
           userRecAudio.src = URL.createObjectURL(blob);
           userRecAudio.style.display = "inline-block";
-          recStatus.textContent = "（已录音）";
-          recBtn.style.display = "inline-block"; stopRecBtn.style.display = "none";
-          recDone = true; checkIfReadyToNext();
+          recStatus.textContent = "（录音完成，正在识别...）";
+          recBtn.style.display = "inline-block";
+          stopRecBtn.style.display = "none";
+          recDone = true;
         };
         mediaRecorder.start();
-      } catch (e) { alert("无法录音：" + e.message); }
+      } catch (e) { 
+        alert("无法录音：" + e.message); 
+        recStatus.textContent = "（录音失败）";
+      }
 
-      if (!recognition) recognition = createRecognition();
+      if (recognition && recognition.state !== "inactive") {
+        recognition.stop();
+      }
+      recognition = createRecognition();
+      
       if (!recognition) {
         transcriptEl.textContent = "（浏览器不支持语音识别）";
         transcriptEl.style.color = "#B71C1C";
         return;
       }
-      transcriptEl.textContent = "（识别中...）";
+      
+      transcriptEl.textContent = "（等待识别...）";
       const q = pool[order[cur]];
       recognition.onresult = e => {
         const text = Array.from(e.results).map(r=>r[0].transcript).join('');
         transcriptEl.textContent = text || "（未识别到）";
         const normalized = text.replace(/\s+/g,'');
+        // 严格验证：必须包含所有字符
         const ok = q.word.split('').every(ch => normalized.includes(ch));
+        
         if (ok) {
           transcriptEl.style.borderColor = "#4CAF50";
           transcriptEl.style.background = "#E8F5E9";
           transcriptEl.style.color = "#1B5E20";
           recCorrect = true;
+          recStatus.textContent = "（朗读正确！）";
         } else {
           transcriptEl.style.borderColor = "#E53935";
           transcriptEl.style.background = "#FFEBEE";
           transcriptEl.style.color = "#B71C1C";
+          recCorrect = false;
+          recStatus.textContent = "（朗读不正确，请重试）";
         }
-        checkIfReadyToNext();
+        
+        checkStageProgress();
       };
-      recognition.onerror = () => {
+      
+      recognition.onerror = e => {
         transcriptEl.textContent = "（识别出错）";
-        transcriptEl.style.borderColor = "#E53935";
-        transcriptEl.style.background = "#FFEBEE";
+        transcriptEl.style.color = "#B71C1C";
+        recStatus.textContent = "（请重试）";
       };
+      
       recognition.start();
     });
 
     stopRecBtn.addEventListener("click", ()=>{
-      if (mediaRecorder && mediaRecorder.state === "recording") mediaRecorder.stop();
-      if (recognition) recognition.stop();
-    });
-
-    playSoundBtn.addEventListener("click", () => playBaiduTtsForWord(pool[order[cur]].syllables));
-
-    nextBtn.addEventListener("click", () => { 
-      if (isChoiceCorrect) {
-        consecutiveCorrect++;
-        if (consecutiveCorrect >= 5) {
-          showRewardAnimation();
-          consecutiveCorrect = 0;
-        }
-      } else {
-        consecutiveCorrect = 0;
+      if (mediaRecorder && mediaRecorder.state === "recording") {
+        mediaRecorder.stop();
       }
-      cur++; cur < total ? showQuestion(cur) : finishRound(); 
+      if (recognition && recognition.state !== "inactive") {
+        recognition.stop();
+      }
     });
-    quitBtn.addEventListener("click", finishRound);
 
-    function finishRound() {
-      gameSection.style.display = "none"; endSection.style.display = "block";
+    playSoundBtn.addEventListener("click", ()=>{
+      const q = pool[order[cur]];
+      playBaiduTtsForWord(q.word);
+    });
+
+    nextBtn.addEventListener("click", ()=>{
+      cur++;
+      if (cur < total) {
+        showQuestion(cur);
+      } else {
+        endGame();
+      }
+    });
+
+    function endGame() {
+      gameSection.style.display = "none"; 
+      endSection.style.display = "block";
       const pct = Math.round((score/total)*100);
       finalScoreEl.textContent = `${score} / ${total} = ${pct}%`;
 
@@ -708,7 +1077,6 @@ setTimeout(() => {
           "达到目标了！你的发音还能更好！👏"
         ];
       } else {
-        // 低于60分的鼓励语（非表扬类）
         phrases = [
           "别灰心，多练习一定能进步 💪",
           "这次没发挥好，再试一次吧 🌟",
@@ -731,41 +1099,11 @@ setTimeout(() => {
       }
     }
 
-    // 显示奖励动画
-    function showRewardAnimation() {
-      const phrases = [
-        "太棒了！连续答对5题！🎉",
-        "你真厉害！连续答对5题！🌟",
-        "哇！连续答对5题！太优秀了！💪",
-        "连续答对5题！你真是个学习小能手！👏",
-        "优秀！连续答对5题！继续保持！🚀"
-      ];
-      
-      const rewardText = phrases[Math.floor(Math.random() * phrases.length)];
-      
-      const rewardDiv = document.createElement("div");
-      rewardDiv.className = "reward-animation";
-      rewardDiv.innerHTML = `
-        <div class="reward-text">${rewardText}</div>
-        <div class="reward-emoji">🎉</div>
-      `;
-      
-      document.body.appendChild(rewardDiv);
-      
-      // 3秒后移除动画
-      setTimeout(() => {
-        document.body.removeChild(rewardDiv);
-      }, 3000);
-    }
-
-    // 显示庆祝动画
     function showCelebrationAnimation(percentage) {
-      // 创建庆祝容器
       const celebrationDiv = document.createElement("div");
       celebrationDiv.className = "celebration";
       document.body.appendChild(celebrationDiv);
       
-      // 创建五彩纸屑
       for (let i = 0; i < 100; i++) {
         const confetti = document.createElement("div");
         confetti.className = "confetti";
@@ -775,7 +1113,6 @@ setTimeout(() => {
         celebrationDiv.appendChild(confetti);
       }
       
-      // 创建礼花
       for (let i = 0; i < 10; i++) {
         setTimeout(() => {
           const firework = document.createElement("div");
@@ -793,7 +1130,6 @@ setTimeout(() => {
         }, i * 300);
       }
       
-      // 分数越高显示的超人越多
       const supermanCount = percentage >= 90 ? 3 : (percentage >= 70 ? 2 : 1);
       for (let i = 0; i < supermanCount; i++) {
         setTimeout(() => {
@@ -811,37 +1147,151 @@ setTimeout(() => {
         }, i * 500);
       }
       
-      // 5秒后移除庆祝动画
       setTimeout(() => {
         document.body.removeChild(celebrationDiv);
       }, 5000);
     }
 
-    retryBtn.addEventListener("click", () => {
-      score = 0; cur = 0; order = shuffleArray(order);
-      endSection.style.display = "none"; gameSection.style.display = "block";
-      qCountEl.textContent = `${cur+1} / ${total}`;
-      scoreText.textContent = `得分：${score}`;
-      progressBar.style.width = "0%";
-      showQuestion(0);
-    });
-    backHomeBtn.addEventListener("click", () => {
-      endSection.style.display = "none"; gameSection.style.display = "none"; homeSection.style.display = "block";
+    quitBtn.addEventListener("click", ()=>{
+      if (confirm("确定要结束练习并返回首页吗？")) {
+        gameSection.style.display = "none";
+        homeSection.style.display = "block";
+      }
     });
 
-    gradeBtns.forEach(b=>b.addEventListener("click",()=>{gradeBtns.forEach(x=>x.classList.remove("selected"));b.classList.add("selected");selectedGrade=+b.dataset.grade;}));
-    numBtns.forEach(b=>b.addEventListener("click",()=>{numBtns.forEach(x=>x.classList.remove("selected"));b.classList.add("selected");selectedNum=b.dataset.num;customInput.value="";}));
-    customInput.addEventListener("input",()=>{const v=+customInput.value;if(v>0){numBtns.forEach(x=>x.classList.remove("selected"));selectedNum="custom";customNum=v;}});
+    retryBtn.addEventListener("click", startGame);
+    backHomeBtn.addEventListener("click", ()=>{
+      endSection.style.display = "none";
+      homeSection.style.display = "block";
+    });
+
+    gradeBtns.forEach(btn => {
+      btn.addEventListener("click", ()=>{
+        gradeBtns.forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedGrade = parseInt(btn.dataset.grade);
+        isCustomWords = false;
+      });
+    });
+
+    numBtns.forEach(btn => {
+      btn.addEventListener("click", ()=>{
+        numBtns.forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedNum = btn.dataset.num;
+        customInput.value = "";
+        isCustomWords = false;
+      });
+    });
+
+    customInput.addEventListener("input", ()=>{
+      numBtns.forEach(b => b.classList.remove("selected"));
+      selectedNum = "custom";
+      customNum = parseInt(customInput.value) || 1;
+      isCustomWords = false;
+    });
+
     startBtn.addEventListener("click", startGame);
-    document.addEventListener("keydown", e => { if (e.key==="Enter" && homeSection.style.display!=="none") startBtn.click(); });
 
-    document.querySelector('.grade-btn[data-grade="4"]').classList.add('selected');
-    document.querySelector('.num-btn[data-num="all"]').classList.add('selected');
+    // 词语选择弹窗相关
+    const wordModal = document.getElementById("word-modal");
+    const selectWordsBtn = document.getElementById("select-words");
+    const startCustomBtn = document.getElementById("start-custom");
+    const cancelModalBtn = document.getElementById("cancel-modal");
+    const gradeSections = document.getElementById("grade-sections");
 
-    window.addEventListener('beforeunload', () => {
-      if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
-      if (recognition) recognition.abort();
+    selectWordsBtn.addEventListener("click", () => {
+      // 清空之前的内容
+      gradeSections.innerHTML = "";
+      selectedWords.clear();
+      
+      // 为每个年级创建词语选择区域
+      for (const grade in gradeWords) {
+        if (gradeWords[grade].length === 0) continue;
+        
+        const gradeSection = document.createElement("div");
+        gradeSection.className = "grade-section";
+        
+        const gradeHeader = document.createElement("div");
+        gradeHeader.className = "grade-header";
+        gradeHeader.innerHTML = `
+          <h3>${grade}年级词语</h3>
+          <button class="select-all-btn" data-grade="${grade}">全选/取消</button>
+        `;
+        gradeSection.appendChild(gradeHeader);
+        
+        const wordGrid = document.createElement("div");
+        wordGrid.className = "word-grid";
+        
+        // 添加该年级的所有词语
+        gradeWords[grade].forEach(wordData => {
+          const wordBtn = document.createElement("div");
+          wordBtn.className = "word-btn";
+          wordBtn.textContent = wordData.word;
+          wordBtn.dataset.word = wordData.word;
+          
+          wordBtn.addEventListener("click", () => {
+            wordBtn.classList.toggle("selected");
+            if (wordBtn.classList.contains("selected")) {
+              selectedWords.add(wordData.word);
+            } else {
+              selectedWords.delete(wordData.word);
+            }
+          });
+          
+          wordGrid.appendChild(wordBtn);
+        });
+        
+        gradeSection.appendChild(wordGrid);
+        gradeSections.appendChild(gradeSection);
+      }
+      
+      // 添加全选/取消功能
+      document.querySelectorAll(".select-all-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const grade = btn.dataset.grade;
+          const wordBtns = btn.closest(".grade-section").querySelectorAll(".word-btn");
+          const allSelected = Array.from(wordBtns).every(b => b.classList.contains("selected"));
+          
+          wordBtns.forEach(b => {
+            if (allSelected) {
+              b.classList.remove("selected");
+              selectedWords.delete(b.dataset.word);
+            } else {
+              b.classList.add("selected");
+              selectedWords.add(b.dataset.word);
+            }
+          });
+        });
+      });
+      
+      wordModal.style.display = "flex";
     });
+
+    startCustomBtn.addEventListener("click", () => {
+      if (selectedWords.size === 0) {
+        alert("请至少选择一个词语");
+        return;
+      }
+      
+      isCustomWords = true;
+      wordModal.style.display = "none";
+      startGame();
+    });
+
+    cancelModalBtn.addEventListener("click", () => {
+      wordModal.style.display = "none";
+    });
+
+    // 点击模态框外部关闭
+    wordModal.addEventListener("click", (e) => {
+      if (e.target === wordModal) {
+        wordModal.style.display = "none";
+      }
+    });
+
+    // 初始化 - 默认选择四年级
+    document.querySelector(`.grade-btn[data-grade="4"]`).classList.add("selected");
   </script>
 </body>
 </html>
