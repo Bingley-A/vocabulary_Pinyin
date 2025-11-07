@@ -398,55 +398,44 @@
     const gradeWords = {
       1: [],
       2: [{word: "我", pinyin: "wǒ", syllables: [{char: "我", pinyinBase: "wo", tone: 3, initial: "w", final: "o"}], english: "I; me"},{word: "叫", pinyin: "jiào", syllables: [{char: "叫", pinyinBase: "jiao", tone: 4, initial: "j", final: "iao"}], english: "call; name"},{word: "下雨", pinyin: "xià yǔ", syllables: [{char: "下", pinyinBase: "xia", tone: 4, initial: "x", final: "ia"}, {char: "雨", pinyinBase: "yu", tone: 3, initial: "", final:"ü"}], english:"rain; raining"},{word: "书包", pinyin: "shū bāo", syllables: [{char: "书", pinyinBase: "shu", tone: 1, initial: "sh", final: "u"}, {char: "包", pinyinBase: "bao", tone: 1, initial: "b", final: "ao"}], english: "schoolbag; backpack"},{word: "本子", pinyin: "běn zi", syllables: [{char: "本", pinyinBase: "ben", tone: 3, initial: "b", final: "en"}, {char: "子", pinyinBase: "zi", tone: 5, initial: "z", final: "i"}], english: "notebook; book"},{word: "同学", pinyin: "tóng xué", syllables: [{char: "同", pinyinBase: "tong", tone: 2, initial: "t", final: "ong"}, {char: "学", pinyinBase: "xue", tone: 2, initial: "x", final: "üe"}], english: "classmate; schoolmate"},{word: "年级", pinyin: "nián jí", syllables: [{char: "年", pinyinBase: "nian", tone: 2, initial: "n", final: "ian"}, {char: "级", pinyinBase: "ji", tone: 2, initial: "j", final: "i"}], english: "grade; year level"},{word: "高兴", pinyin: "gāo xìng", syllables: [{char: "高", pinyinBase: "gao", tone: 1, initial: "g", final: "ao"}, {char: "兴", pinyinBase: "xing", tone: 4, initial: "x", final: "ing"}], english: "happy; glad"},{word: "回来", pinyin: "huí lái", syllables: [{char: "回", pinyinBase: "hui", tone: 2, initial: "h", final: "ui"}, {char: "来", pinyinBase: "lai", tone: 2, initial: "l", final: "ai"}], english: "come back; return"},{word: "开心", pinyin: "kāi xīn", syllables: [{char: "开", pinyinBase: "kai", tone: 1, initial: "k", final: "ai"}, {char: "心", pinyinBase: "xin", tone: 1, initial: "x", final: "in"}], english: "happy; joyful"},{word: "长大", pinyin: "zhǎng dà", syllables: [{char: "长", pinyinBase: "zhang", tone: 3, initial: "zh", final: "ang"}, {char: "大", pinyinBase: "da", tone: 4, initial: "d", final: "a"}], english: "grow up; become an adult"},{word: "还有", pinyin: "hái yǒu", syllables: [{char: "还", pinyinBase: "hai", tone: 2, initial: "h", final: "ai"}, {char: "有", pinyinBase: "you", tone: 3, initial: "y", final: "ou"}], english: "still have; in addition"}],
-      3: [],
+      3: [{word: "国家", pinyin: "guó jiā", syllables: [{char: "国", pinyinBase: "guo", tone: 2, initial: "g", final: "uo"}, {char: "家", pinyinBase: "jia", tone: 1, initial: "j", final: "ia"}], english: "country; nation"},{word: "爱", pinyin: "ài", syllables: [{char: "爱", pinyinBase: "ai", tone: 4, initial: "", final:"ai"}], english:"love; like"},{word: "学习", pinyin: "xué xí", syllables: [{char: "学", pinyinBase: "xue", tone: 2, initial: "x", final: "üe"}, {char: "习", pinyinBase: "xi", tone: 2, initial: "x", final: "i"}], english: "study; learn"},{word: "朋友", pinyin: "péng yǒu", syllables: [{char: "朋", pinyinBase: "peng", tone: 2, initial: "p", final: "eng"}, {char: "友", pinyinBase: "you", tone: 3, initial: "y", final: "ou"}], english: "friend; pal"},{word: "天空", pinyin: "tiān kōng", syllables: [{char: "天", pinyinBase: "tian", tone: 1, initial: "t", final: "ian"}, {char: "空", pinyinBase: "kong", tone: 1, initial: "k", final: "ong"}], english: "sky; heaven"},{word: "名字", pinyin: "míng zi", syllables: [{char: "名", pinyinBase: "ming", tone: 2, initial: "m", final: "ing"}, {char: "子", pinyinBase: "zi", tone: 5, initial: "z", final: "i"}], english: "name; given name"},{word: "帮助", pinyin: "bāng zhù", syllables: [{char: "帮", pinyinBase: "bang", tone: 1, initial: "b", final: "ang"}, {char: "助", pinyinBase: "zhu", tone: 4, initial: "zh", final: "u"}], english: "help; assist"},{word: "勇敢", pinyin: "yǒng gǎn", syllables: [{char: "勇", pinyinBase: "yong", tone: 3, initial: "y", final: "ong"}, {char: "敢", pinyinBase: "gan", tone: 3, initial: "g", final: "an"}], english: "brave; courageous"},{word: "喜欢", pinyin: "xǐ huān", syllables: [{char: "喜", pinyinBase: "xi", tone: 3, initial: "x", final: "i"}, {char: "欢", pinyinBase: "huan", tone: 1, initial: "h", final: "uan"}], english: "like; be fond of"},{word: "觉得", pinyin: "jué de", syllables: [{char: "觉", pinyinBase: "jue", tone: 2, initial: "j", final: "üe"}, {char: "得", pinyinBase: "de", tone: 5, initial: "d", final: "e"}], english: "think; feel"},{word: "可靠", pinyin: "kě kào", syllables: [{char: "可", pinyinBase: "ke", tone: 3, initial: "k", final: "e"}, {char: "靠", pinyinBase: "kao", tone: 4, initial: "k", final: "ao"}], english: "reliable; trustworthy"},{word: "英雄", pinyin: "yīng xióng", syllables: [{char: "英", pinyinBase: "ying", tone: 1, initial: "y", final: "ing"}, {char: "雄", pinyinBase: "xiong", tone: 2, initial: "x", final: "iong"}], english: "hero; heroic person"},{word: "特质", pinyin: "tè zhì", syllables: [{char: "特", pinyinBase: "te", tone: 4, initial: "t", final: "e"}, {char: "质", pinyinBase: "zhi", tone: 4, initial: "zh", final: "i"}], english: "trait; characteristic"}],
       4: [
-        {
-          word: "个人",
-          pinyin: "gè rén",
+        {word: "个人", pinyin: "gè rén",
           syllables: [
             {char: "个", pinyinBase: "ge", tone: 4, initial: "g", final: "e"},
             {char: "人", pinyinBase: "ren", tone: 2, initial: "r", final: "en"}
           ],
           english: "personal; individual"
         },
-        {
-          word: "社会",
-          pinyin: "shè huì",
+        {word: "社会", pinyin: "shè huì",
           syllables: [
             {char: "社", pinyinBase: "she", tone: 4, initial: "sh", final: "e"},
             {char: "会", pinyinBase: "hui", tone: 4, initial: "h", final: "ui"}
           ],
           english: "society; social"
         },
-        {
-          word: "角色",
-          pinyin: "jué sè",
+        {word: "角色", pinyin: "jué sè",
           syllables: [
             {char: "角", pinyinBase: "jue", tone: 2, initial: "j", final: "ue"},
             {char: "色", pinyinBase: "se", tone: 4, initial: "s", final: "e"}
           ],
           english: "role; character"
         },
-        {
-          word: "代表",
-          pinyin: "dài biǎo",
+        {word: "代表", pinyin: "dài biǎo",
           syllables: [
             {char: "代", pinyinBase: "dai", tone: 4, initial: "d", final: "ai"},
             {char: "表", pinyinBase: "biao", tone: 3, initial: "b", final: "iao"}
           ],
           english: "representative; to represent"
         },
-        {
-          word: "兴趣",
-          pinyin: "xìng qù",
+        {word: "兴趣", pinyin: "xìng qù",
           syllables: [
             {char: "兴", pinyinBase: "xing", tone: 4, initial: "x", final: "ing"},
             {char: "趣", pinyinBase: "qu", tone: 4, initial: "q", final: "u"}
           ],
           english: "interest; hobby"
         },
-        {
-          word: "家庭",
+        {word: "家庭",
           pinyin: "jiā tíng",
           syllables: [
             {char: "家", pinyinBase: "jia", tone: 1, initial: "j", final: "ia"},
@@ -454,27 +443,21 @@
           ],
           english: "family; household"
         },
-        {
-          word: "学校",
-          pinyin: "xué xiào",
+        {word: "学校",pinyin: "xué xiào",
           syllables: [
             {char: "学", pinyinBase: "xue", tone: 2, initial: "x", final: "ue"},
             {char: "校", pinyinBase: "xiao", tone: 4, initial: "x", final: "iao"}
           ],
           english: "school"
         },
-        {
-          word: "活动",
-          pinyin: "huó dòng",
+        {word: "活动",pinyin: "huó dòng",
           syllables: [
             {char: "活", pinyinBase: "huo", tone: 2, initial: "h", final: "uo"},
             {char: "动", pinyinBase: "dong", tone: 4, initial: "d", final: "ong"}
           ],
           english: "activity; event"
         },
-        {
-          word: "老师",
-          pinyin: "lǎo shī",
+        {word: "老师",pinyin: "lǎo shī",
           syllables: [
             {char: "老", pinyinBase: "lao", tone: 3, initial: "l", final: "ao"},
             {char: "师", pinyinBase: "shi", tone: 1, initial: "sh", final: "i"}
@@ -617,6 +600,7 @@
           ],
           english: "oneself; self"
         }
+        {word: "特别", pinyin: "tè bié", syllables: [{char: "特", pinyinBase: "te", tone: 4, initial: "t", final: "e"}, {char: "别", pinyinBase: "bie", tone: 2, initial: "b", final: "ie"}], english: "special; especially"},{word: "习惯", pinyin: "xí guàn", syllables: [{char: "习", pinyinBase: "xi", tone: 2, initial: "x", final: "i"}, {char: "惯", pinyinBase: "guan", tone: 4, initial: "g", final: "uan"}], english: "habit; custom"},{word: "传统", pinyin: "chuán tǒng", syllables: [{char: "传", pinyinBase: "chuan", tone: 2, initial: "ch", final: "uan"}, {char: "统", pinyinBase: "tong", tone: 3, initial: "t", final: "ong"}], english: "tradition; conventional"},{word: "责任", pinyin: "zé rèn", syllables: [{char: "责", pinyinBase: "ze", tone: 2, initial: "z", final: "e"}, {char: "任", pinyinBase: "ren", tone: 4, initial: "r", final: "en"}], english: "responsibility; duty"},{word: "采访", pinyin: "cǎi fǎng", syllables: [{char: "采", pinyinBase: "cai", tone: 3, initial: "c", final: "ai"}, {char: "访", pinyinBase: "fang", tone: 3, initial: "f", final: "ang"}], english: "interview; cover"},{word: "棒球", pinyin: "bàng qiú", syllables: [{char: "棒", pinyinBase: "bang", tone: 4, initial: "b", final: "ang"}, {char: "球", pinyinBase: "qiu", tone: 2, initial: "q", final: "iu"}], english: "baseball"},{word: "露营", pinyin: "lù yíng", syllables: [{char: "露", pinyinBase: "lu", tone: 4, initial: "l", final: "u"}, {char: "营", pinyinBase: "ying", tone: 2, initial: "y", final: "ing"}], english: "camping; camp"},{word: "球队", pinyin: "qiú duì", syllables: [{char: "球", pinyinBase: "qiu", tone: 2, initial: "q", final: "iu"}, {char: "队", pinyinBase: "dui", tone: 4, initial: "d", final: "ui"}], english: "team; ball team"},{word: "捡垃圾", pinyin: "jiǎn lā jī", syllables: [{char: "捡", pinyinBase: "jian", tone: 3, initial: "j", final: "ian"}, {char: "垃", pinyinBase: "la", tone: 1, initial: "l", final: "a"}, {char: "圾", pinyinBase: "ji", tone: 1, initial: "j", final: "i"}], english: "pick up garbage; collect trash"},{word: "遛狗", pinyin: "liù gǒu", syllables: [{char: "遛", pinyinBase: "liu", tone: 4, initial: "l", final: "iu"}, {char: "狗", pinyinBase: "gou", tone: 3, initial: "g", final: "ou"}], english: "walk the dog"},{word: "跑步", pinyin: "pǎo bù", syllables: [{char: "跑", pinyinBase: "pao", tone: 3, initial: "p", final: "ao"}, {char: "步", pinyinBase: "bu", tone: 4, initial: "b", final: "u"}], english: "run; jog"},{word: "班长", pinyin: "bān zhǎng", syllables: [{char: "班", pinyinBase: "ban", tone: 1, initial: "b", final: "an"}, {char: "长", pinyinBase: "zhang", tone: 3, initial: "zh", final: "ang"}], english: "monitor; class president"},{word: "球员", pinyin: "qiú yuán", syllables: [{char: "球", pinyinBase: "qiu", tone: 2, initial: "q", final: "iu"}, {char: "员", pinyinBase: "yuan", tone: 2, initial: "y", final: "uan"}], english: "player; team member"},{word: "球场", pinyin: "qiú chǎng", syllables: [{char: "球", pinyinBase: "qiu", tone: 2, initial: "q", final: "iu"}, {char: "场", pinyinBase: "chang", tone: 3, initial: "ch", final: "ang"}], english: "court; stadium"},{word: "孩子", pinyin: "hái zi", syllables: [{char: "孩", pinyinBase: "hai", tone: 2, initial: "h", final: "ai"}, {char: "子", pinyinBase: "zi", tone: 5, initial: "z", final: "i"}], english: "child; kid"},{word: "合唱团", pinyin: "hé chàng tuán", syllables: [{char: "合", pinyinBase: "he", tone: 2, initial: "h", final: "e"}, {char: "唱", pinyinBase: "chang", tone: 4, initial: "ch", final: "ang"}, {char: "团", pinyinBase: "tuan", tone: 2, initial: "t", final: "uan"}], english: "choir; chorus"},{word: "值日生", pinyin: "zhí rì shēng", syllables: [{char: "值", pinyinBase: "zhi", tone: 2, initial: "zh", final: "i"}, {char: "日", pinyinBase: "ri", tone: 4, initial: "r", final: "i"}, {char: "生", pinyinBase: "sheng", tone: 1, initial: "sh", final: "eng"}], english: "on-duty student; duty roster"},{word: "了解", pinyin: "liǎo jiě", syllables: [{char: "了", pinyinBase: "liao", tone: 3, initial: "l", final: "iao"}, {char: "解", pinyinBase: "jie", tone: 3, initial: "j", final: "ie"}], english: "understand; know about"},{word: "超级", pinyin: "chāo jí", syllables: [{char: "超", pinyinBase: "chao", tone: 1, initial: "ch", final: "ao"}, {char: "级", pinyinBase: "ji", tone: 2, initial: "j", final: "i"}], english: "super; ultra"},{word: "弹吉他", pinyin: "tán jí tā", syllables: [{char: "弹", pinyinBase: "tan", tone: 2, initial: "t", final: "an"}, {char: "吉", pinyinBase: "ji", tone: 2, initial: "j", final: "i"}, {char: "他", pinyinBase: "ta", tone: 1, initial: "t", final: "a"}], english: "play the guitar"},{word: "打鼓", pinyin: "dǎ gǔ", syllables: [{char: "打", pinyinBase: "da", tone: 3, initial: "d", final: "a"}, {char: "鼓", pinyinBase: "gu", tone: 3, initial: "g", final: "u"}], english: "play the drums"},{word: "炒菜", pinyin: "chǎo cài", syllables: [{char: "炒", pinyinBase: "chao", tone: 3, initial: "ch", final: "ao"}, {char: "菜", pinyinBase: "cai", tone: 4, initial: "c", final: "ai"}], english: "stir-fry; cook dishes"},{word: "包饺子", pinyin: "bāo jiǎo zi", syllables: [{char: "包", pinyinBase: "bao", tone: 1, initial: "b", final: "ao"}, {char: "饺", pinyinBase: "jiao", tone: 3, initial: "j", final: "iao"}, {char: "子", pinyinBase: "zi", tone: 5, initial: "z", final: "i"}], english: "make dumplings"}
       ]
     };
 
@@ -863,10 +847,6 @@
       qCountEl.textContent = `${index+1} / ${total}`;
       progressBar.style.width = Math.round((index/total)*100) + "%";
       
-      // 进入题目后自动播放音频
-      setTimeout(() => {
-        playBaiduTtsForWord(q.word);
-      }, 500);
     }
 
     function checkStageProgress() {
@@ -1032,7 +1012,8 @@
       // 计算Dojo分
       let dojoPoints = 0;
       let dojoText = "";
-      
+      let showDojoInfo = total >= 20;
+      if (showDojoInfo) {
       if (pct >= 60 && pct < 70) {
         dojoPoints = 1;
         dojoText = "恭喜获得1个Dojo分";
@@ -1048,7 +1029,10 @@
       } else if (pct === 100) {
         dojoPoints = 5;
         dojoText = "恭喜获得5个Dojo分";
-      }
+      } else {
+    showDojoInfo = false;
+  }
+}
 
       // 根据分数设置不同鼓励语
       let phrases;
